@@ -76,3 +76,15 @@ O SGPJ centraliza o ciclo de vida do caso, do contrato assinado até o protocolo
 | RF 008 | O sistema deve apresentar ao coordenador um painel por etapa e situação (quantidade, percentual, soma de honorários e valores de causa, filtrável por mês) e gerar relatórios de produtividade dos advogados e de tempos médios entre as etapas em um período informado. | Média | RF 005 |
 | RF 009 | O sistema deve se integrar aos tribunais para acompanhar os processos dos casos protocolados e identificar novidades. | Média | RF 005 |
 | RF 010 | O sistema deve se integrar aos meios de contato do escritório e avisar o cliente por e-mail ou WhatsApp quando houver novidades no processo ou documentos pendentes. | Média | RF 003, RF 009 |
+
+### 2.2 Requisitos Não Funcionais
+
+| ID | Descrição | Categoria | Prioridade | Depende de |
+| --- | --- | --- | --- | --- |
+| RNF 001 | O sistema deve verificar o perfil do usuário no servidor antes de cada operação, permitindo que o advogado altere apenas os casos atribuídos a ele. | Segurança | Alta | — |
+| RNF 002 | O sistema deve suportar ao menos 30 usuários simultâneos editando casos diferentes sem perda de dados. Se dois usuários alterarem o mesmo caso ao mesmo tempo, o segundo deve ser avisado do conflito em vez de sobrescrever a alteração. | Confiabilidade | Alta | — |
+| RNF 003 | As telas de listagem e pesquisa devem carregar em até 2 segundos com uma base de até 10.000 casos. | Desempenho | Alta | — |
+| RNF 004 | A interface deve ser responsiva, funcionando nos navegadores atuais (Chrome, Firefox e Edge) em computadores e celulares. | Usabilidade | Média | — |
+| RNF 005 | Os campos de seleção (etapa, situação, forma de pagamento e perfil) devem usar listas fechadas, nunca texto livre, e o sistema deve validar CPF, datas e valores monetários antes de salvar. | Usabilidade | Alta | — |
+| RNF 006 | O sistema deve estar disponível em 99% do horário comercial (segunda a sexta, das 8h às 19h). | Disponibilidade | Média | — |
+| RNF 007 | O sistema deve realizar backup automático diário da base de dados, com retenção mínima de 30 dias. | Confiabilidade | Alta | — |
