@@ -50,6 +50,7 @@ O SGPJ centraliza o ciclo de vida do caso, do contrato assinado até o protocolo
 - Fluxo de análise de renúncia.
 - Registro da situação de pagamento dos honorários.
 - Painel de indicadores por etapa, relatório de produtividade por advogado e tempos médios entre etapas.
+- Sistema de tarefas para os atores.
 
 ### 1.6 Fora do escopo
 
@@ -62,12 +63,11 @@ O SGPJ centraliza o ciclo de vida do caso, do contrato assinado até o protocolo
 
 
 ### 2.1 Requisitos Funcionais
-# Requisitos Funcionais
 
 | ID | Descrição | Prioridade | Depende de |
 | --- | --- | --- | --- |
 | RF 001 | O sistema deve permitir a autenticação por e-mail e senha e liberar a cada perfil apenas as suas funções: o Administrador gerencia usuários e parâmetros da operação (documentos obrigatórios, formas de pagamento e feriados); o Coordenador distribui casos e acompanha painel e relatórios; o Advogado trabalha os seus casos e protocola petições; o Assistente de Documentação cadastra clientes e casos, controla contatos e documentos; o Financeiro controla os pagamentos. | Alta | — |
-| RF 002 | O sistema deve permitir cadastrar clientes (nome, CPF, telefone, e-mail e UF) e casos vinculados a eles (data de assinatura do contrato, valor da causa, honorários, forma de pagamento, descrição da ação, prioridade e indicação de réu federal). O caso é criado na etapa Documentação e pode assumir as situações Pré-processual, Protocolado e Renunciado. | Alta | RF 001 |
+| RF 002 | O sistema deve permitir cadastrar clientes (nome, CPF, telefone, e-mail e UF) e casos vinculados a eles (data de assinatura do contrato, valor da causa, honorários, forma de pagamento, data de pagamento, descrição da ação, prioridade e indicação de réu federal). O caso é criado na etapa Documentação e pode assumir as situações Pré-processual, Protocolado e Renunciado. | Alta | RF 001 |
 | RF 003 | O sistema deve permitir registrar as tentativas de contato com o cliente (data, meio e observação) e controlar o checklist de documentos obrigatórios do caso, registrando a data de recebimento de cada documento. | Alta | RF 002 |
 | RF 004 | O sistema deve permitir encaminhar o caso da etapa Documentação para a etapa Pré-processual e permitir que o coordenador distribua e redistribua o caso a um advogado, definindo a data prevista de entrega da petição inicial. | Alta | RF 003 |
 | RF 005 | O sistema deve exibir ao advogado a sua fila de casos, ordenada pela data prevista de entrega, e permitir que ele atualize a situação da petição inicial (Em andamento, Em correção, Protocolada), exigindo a data do protocolo ao protocolar e movendo o caso para a etapa Protocolado. | Alta | RF 004 |
@@ -76,6 +76,8 @@ O SGPJ centraliza o ciclo de vida do caso, do contrato assinado até o protocolo
 | RF 008 | O sistema deve apresentar ao coordenador um painel por etapa e situação (quantidade, percentual, soma de honorários e valores de causa, filtrável por mês) e gerar relatórios de produtividade dos advogados e de tempos médios entre as etapas em um período informado. | Média | RF 005 |
 | RF 009 | O sistema deve se integrar aos tribunais para acompanhar os processos dos casos protocolados e identificar novidades. | Média | RF 005 |
 | RF 010 | O sistema deve se integrar aos meios de contato do escritório e avisar o cliente por e-mail ou WhatsApp quando houver novidades no processo ou documentos pendentes. | Média | RF 003, RF 009 |
+| RF 011 | O sistema deve apresentar a cada usuário um painel de tarefas com os casos que exigem ação do seu perfil, gerado automaticamente a partir da situação de cada caso: o Assistente de Documentação vê os casos com documentos pendentes ou sem contato recente; o Coordenador vê os casos aguardando distribuição; o Advogado vê as petições a entregar, ordenadas pela data prevista; o Financeiro vê os casos protocolados com pagamento pendente ou atrasado. O painel deve destacar as tarefas atrasadas e permitir abrir o caso diretamente a partir da tarefa. | Média | RF 001, RF 003, RF 004, RF 005, RF 006 |
+| RF 012 | O sistema deve permitir que o advogado, em qualquer etapa do caso, inclusive após o protocolo, solicite ao setor de documentação a obtenção de documentos adicionais exigidos pelo juiz, informando o documento pedido, a descrição e o prazo. O assistente de documentação deve receber a solicitação em seu painel de tarefas, registrar o contato com o cliente e a data de recebimento do documento, e marcar a solicitação como atendida, o que deve notificar o advogado. | Média | RF 003, RF 005, RF 007, RF 011 |
 
 ### 2.2 Requisitos Não Funcionais
 
@@ -88,3 +90,12 @@ O SGPJ centraliza o ciclo de vida do caso, do contrato assinado até o protocolo
 | RNF 005 | Os campos de seleção (etapa, situação, forma de pagamento e perfil) devem usar listas fechadas, nunca texto livre, e o sistema deve validar CPF, datas e valores monetários antes de salvar. | Usabilidade | Alta | — |
 | RNF 006 | O sistema deve estar disponível em 99% do horário comercial (segunda a sexta, das 8h às 19h). | Disponibilidade | Média | — |
 | RNF 007 | O sistema deve realizar backup automático diário da base de dados, com retenção mínima de 30 dias. | Confiabilidade | Alta | — |
+
+### 2.3 Regras de negócio
+
+| ID | Descrição | Prioridade | Depende de |
+| --- | --- | --- | --- |
+| RN 001 | O caso só pode ser distribuído a um advogado para elaboração da petição inicial depois que todos os documentos obrigatórios do checklist estiverem recebidos. Enquanto houver documento pendente, o sistema deve bloquear o encaminhamento para a etapa Pré-processual. | Alta | RF 003, RF 004 |
+| RN 002 | O financeiro só pode cobrar o cliente e registrar a situação do pagamento dos honorários em casos que já tenham sido protocolados, com a data do protocolo preenchida. | Alta | RF 005, RF 006 |
+| RN 003 | Se a data de vencimento da primeira parcela passar sem que o caso tenha sido protocolado, o sistema deve sinalizar o caso como atrasado por falta de protocolo. Nessa situação o cliente não é considerado inadimplente, pois ainda não pode ser cobrado. | Alta | RN 002, RF 002, RF 008 |
+| RN 004 | Se a data de vencimento da parcela passar com o caso já protocolado e o pagamento não tiver sido registrado como Pago, o sistema deve marcar o pagamento como Atrasado e sinalizar o cliente como inadimplente. | Alta | RN 002, RF 006 |
